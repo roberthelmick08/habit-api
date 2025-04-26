@@ -10,6 +10,17 @@ exports.getDateHabits = async (req, res) => {
   }
 };
 
+exports.getDateHabitsWithEntries = async (req, res) => {
+  try {
+    const dateHabits = await dateHabitModel.getDateHabitsWithEntries(
+      req.params.userId
+    );
+    res.json(dateHabits);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.createDateHabit = async (req, res) => {
   const { id, userId, completed } = req.body;
   try {

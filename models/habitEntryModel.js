@@ -8,10 +8,10 @@ exports.createHabitEntry = async (dateHabitId, habitId, completed) => {
   return result.rows[0];
 };
 
-exports.getEntriesByDateHabit = async (dateHabitId) => {
+exports.getEntriesByUserDateHabit = async (userId, dateHabitId) => {
   const result = await db.query(
-    'SELECT * FROM habit_entries WHERE date_habit_id = $1',
-    [dateHabitId]
+    'SELECT * FROM habit_entries WHERE user_id = $1 AND date_habit_id = $2',
+    [userId, dateHabitId]
   );
   return result.rows;
 };
