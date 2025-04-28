@@ -11,17 +11,16 @@ exports.getDateHabits = async (userId) => {
 exports.getDateHabitsWithEntries = async (userId) => {
   const result = await db.query(
     `SELECT
-        dh.id AS date_habit_id,
-        dh.user_id,
+        dh.id AS "dateId",
         dh.completed,
         (
-          SELECT ARRAY_AGG(
-            ROW(he.id, h.name, he.completed)
+          SELECT json_agg(
+            json_build_object('id', h.id, 'name', h.name, 'completed', he.completed)
           )
           FROM habit_entries he
           INNER JOIN habits h ON he.habit_id = h.id
           WHERE he.date_habit_id = dh.id
-        ) AS habit_entries
+        ) AS habits
       FROM date_habits dh
       WHERE dh.user_id = $1;
   `,
