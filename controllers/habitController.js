@@ -19,6 +19,19 @@ exports.createHabit = async (req, res) => {
   }
 };
 
+exports.deleteHabit = async (req, res) => {
+  try {
+    const habits = await habitModel.deleteHabit(
+      req.params.userId,
+      req.params.habitId,
+      req.params.dateId
+    );
+    res.json(habits);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.updateHabit = async (req, res) => {
   const { userId, habitId, name } = req.body;
   try {
