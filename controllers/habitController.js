@@ -10,9 +10,9 @@ exports.getHabits = async (req, res) => {
 };
 
 exports.createHabit = async (req, res) => {
-  const { userId, name, dateId } = req.body;
+  const { userId, name, dateId, sortOrder } = req.body;
   try {
-    const habit = await habitModel.createHabit(userId, name, dateId);
+    const habit = await habitModel.createHabit(userId, name, dateId, sortOrder);
     res.status(201).json(habit);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -33,10 +33,25 @@ exports.deleteHabit = async (req, res) => {
 };
 
 exports.updateHabit = async (req, res) => {
-  const { userId, habitId, name } = req.body;
+  const { userId, habitId, name, sortOrder } = req.body;
   try {
-    const habit = await habitModel.updateHabit(userId, habitId, name);
+    const habit = await habitModel.updateHabit(
+      userId,
+      habitId,
+      name,
+      sortOrder
+    );
     res.status(201).json(habit);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateHabitsBatch = async (req, res) => {
+  const { userId, habits } = req.body;
+  try {
+    const updatedHabits = await habitModel.updateHabitsBatch(userId, habits);
+    res.status(201).json(updatedHabits);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -2,12 +2,14 @@ const express = require('express');
 const app = express();
 const userRoutes = require('./routes/users');
 const habitRoutes = require('./routes/habits');
+const habitEntryRoutes = require('./routes/habitEntries');
 const dateHabitRoutes = require('./routes/dateHabits');
 
 app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/habits', habitRoutes);
+app.use('/api/habit-entries', habitEntryRoutes);
 app.use('/api/date-habits', dateHabitRoutes);
 
 module.exports = app;

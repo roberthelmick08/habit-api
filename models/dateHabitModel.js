@@ -15,7 +15,7 @@ exports.getDateHabitsWithEntries = async (userId) => {
         dh.completed,
         (
           SELECT json_agg(
-            json_build_object('id', h.id, 'name', h.name, 'completed', he.completed)
+            json_build_object('id', h.id, 'habitEntryId', he.id, 'name', h.name, 'completed', he.completed)
           )
           FROM habit_entries he
           INNER JOIN habits h ON he.habit_id = h.id

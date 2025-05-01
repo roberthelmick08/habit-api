@@ -8,7 +8,8 @@ CREATE TABLE users (
 CREATE TABLE habits (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
-  name TEXT NOT NULL
+  name TEXT NOT NULL,
+  sort_order INTEGER NOT NULL
 );
 
 CREATE TABLE date_habits (
@@ -21,5 +22,6 @@ CREATE TABLE habit_entries (
   id SERIAL PRIMARY KEY,
   date_habit_id VARCHAR(10) REFERENCES date_habits(id),
   habit_id INTEGER REFERENCES habits(id),
-  completed BOOLEAN
+  completed BOOLEAN,
+  sort_order INTEGER NOT NULL
 );
