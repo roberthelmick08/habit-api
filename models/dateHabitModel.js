@@ -22,7 +22,8 @@ exports.getDateHabitsWithEntries = async (userId) => {
           WHERE he.date_habit_id = dh.id
         ) AS "habitEntries"
       FROM date_habits dh
-      WHERE dh.user_id = $1;
+      WHERE dh.user_id = $1
+      ORDER BY dh.id ASC;
   `,
     [userId]
   );

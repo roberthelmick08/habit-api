@@ -22,10 +22,10 @@ exports.getDateHabitsWithEntries = async (req, res) => {
 };
 
 exports.createDateHabits = async (req, res) => {
-  const { userId, dateHabits, habits } = req.body;
+  const { dateHabits, habits } = req.body;
   try {
     const updatedDateHabits = await dateHabitModel.createDateHabits(
-      userId,
+      req.params.userId,
       dateHabits,
       habits
     );
