@@ -23,5 +23,4 @@ CREATE TABLE habit_entries (
   date_habit_id VARCHAR(10) REFERENCES date_habits(id),
   habit_id INTEGER REFERENCES habits(id),
   completed BOOLEAN,
-  sort_order INTEGER NOT NULL
 );

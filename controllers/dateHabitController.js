@@ -21,15 +21,15 @@ exports.getDateHabitsWithEntries = async (req, res) => {
   }
 };
 
-exports.createDateHabit = async (req, res) => {
-  const { id, userId, completed } = req.body;
+exports.createDateHabits = async (req, res) => {
+  const { userId, dateHabits, habits } = req.body;
   try {
-    const dateHabit = await dateHabitModel.createDateHabit(
-      id,
+    const updatedDateHabits = await dateHabitModel.createDateHabits(
       userId,
-      completed
+      dateHabits,
+      habits
     );
-    res.status(201).json(dateHabit);
+    res.status(201).json(updatedDateHabits);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

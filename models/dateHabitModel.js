@@ -20,7 +20,7 @@ exports.getDateHabitsWithEntries = async (userId) => {
           FROM habit_entries he
           INNER JOIN habits h ON he.habit_id = h.id
           WHERE he.date_habit_id = dh.id
-        ) AS habits
+        ) AS "habitEntries"
       FROM date_habits dh
       WHERE dh.user_id = $1;
   `,
@@ -29,10 +29,45 @@ exports.getDateHabitsWithEntries = async (userId) => {
   return result.rows;
 };
 
-exports.createDateHabit = async (id, userId, completed = false) => {
-  const result = await db.query(
-    'INSERT INTO date_habits (id, user_id, completed) VALUES ($1, $2, $3) RETURNING *',
-    [id, userId, completed]
-  );
-  return result.rows[0];
+exports.createDateHabits = async (userId, dateHabits, habits) => {
+  const client = await db.connect();
+
+  const resultArray = [];
+  try {
+    await client.query('BEGIN');
+    for (const dh of dateHabits) {
+      const res = await client.query(
+        'INSERT INTO date_habits (id, user_id) VALUES ($1, $2) RETURNING *',
+        [dh.dateId, userId]
+      );
+
+      const habitEntries = [];
+      for (const h of habits) {
+        const habitRes = await client.query(
+          'INSERT INTO habit_entries (date_habit_id, habit_id) VALUES ($1, $2) RETURNING *',
+          [dh.dateId, h.id]
+        );
+
+        const inserted = habitRes.rows[0];
+
+        habitEntries.push({
+          id: h.id,
+          habitEntryId: inserted.id,
+          name: h.name,
+          completed: null,
+        });
+      }
+      resultArray.push({
+        dateId: dh.dateId,
+        completed: false,
+        habitEntries,
+      });
+    }
+    await client.query('COMMIT');
+    return resultArray;
+  } catch (err) {
+    await client.query('ROLLBACK');
+  } finally {
+    client.release();
+  }
 };

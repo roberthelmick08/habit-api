@@ -66,7 +66,6 @@ exports.updateHabitsBatch = async (userId, habits) => {
       );
     }
     await client.query('COMMIT');
-    return result.rows;
   } catch (err) {
     await client.query('ROLLBACK');
   } finally {
