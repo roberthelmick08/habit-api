@@ -1,8 +1,7 @@
 CREATE TABLE users (
   ID SERIAL PRIMARY KEY,
-  name VARCHAR(30),
-  email VARCHAR(30),
-  password VARCHAR(30)
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL
 );
 
 CREATE TABLE habits (
@@ -22,5 +21,5 @@ CREATE TABLE habit_entries (
   id SERIAL PRIMARY KEY,
   date_habit_id VARCHAR(10) REFERENCES date_habits(id),
   habit_id INTEGER REFERENCES habits(id),
-  completed BOOLEAN,
+  completed BOOLEAN
 );
