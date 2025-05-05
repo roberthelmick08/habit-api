@@ -1,11 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const habitController = require('../controllers/habitController');
+const authController = require('../controllers/authController');
 
-router.get('/:userId', habitController.getHabits);
-router.delete('/:userId/:habitId/:dateId', habitController.deleteHabit);
-router.post('/', habitController.createHabit);
-router.put('/', habitController.updateHabit);
-router.put('/batch-update', habitController.updateHabitsBatch);
+router.get(
+  '/:userId',
+  authController.authenticateToken,
+  habitController.getHabits
+);
+router.delete(
+  '/:userId/:habitId/:dateId',
+  authController.authenticateToken,
+  habitController.deleteHabit
+);
+router.post('/', authController.authenticateToken, habitController.createHabit);
+router.put('/', authController.authenticateToken, habitController.updateHabit);
+router.put(
+  '/batch-update',
+  authController.authenticateToken,
+  habitController.updateHabitsBatch
+);
 
 module.exports = router;
