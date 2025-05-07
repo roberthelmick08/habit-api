@@ -11,6 +11,7 @@ exports.getHabits = async (req, res) => {
 
 exports.createHabit = async (req, res) => {
   const { userId, name, dateId, sortOrder } = req.body;
+  console.log(name, dateId);
   try {
     const habit = await habitModel.createHabit(userId, name, dateId, sortOrder);
     res.status(201).json(habit);

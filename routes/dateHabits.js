@@ -6,13 +6,17 @@ const authController = require('../controllers/authController');
 router.get(
   '/:userId',
   authController.authenticateToken,
-  authenticateTokendateHabitController.getDateHabitsWithEntries
+  dateHabitController.getDateHabitsWithEntries
 );
 router.post(
   '/:userId',
   authController.authenticateToken,
   dateHabitController.createDateHabits
 );
-router.post('/entry', authenticateToken, dateHabitController.addHabitEntry);
+router.post(
+  '/entry',
+  authController.authenticateToken,
+  dateHabitController.addHabitEntry
+);
 
 module.exports = router;

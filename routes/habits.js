@@ -8,7 +8,7 @@ router.get(
   authController.authenticateToken,
   habitController.getHabits
 );
-router.delete(
+router.put(
   '/:userId/:habitId/:dateId',
   authController.authenticateToken,
   habitController.deleteHabit
