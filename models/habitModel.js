@@ -37,15 +37,22 @@ exports.deleteHabit = async (userId, habitId) => {
   return result.rows[0];
 };
 
-exports.updateHabit = async (userId, habitId, name, sortOrder) => {
-  const result = await db.query(
-    `UPDATE habits
-      SET name = $3 AND sort_order = $4
-      WHERE user_id = $1 AND id = $2
-      RETURNING *`,
-    [userId, habitId, name, sortOrder]
-  );
-  return result.rows[0];
+exports.updateHabit = async (userId, habitId, name) => {
+  try {
+    console.log('!!!', userId, habitId, name);
+
+    const result = await db.query(
+      `UPDATE habits SET name = $3 WHERE user_id = $1 AND id = $2 RETURNING *`,
+      [userId, habitId, name]
+    );
+    console.log('@@@@', result.rows[0]);
+    return result.rows[0];
+  } catch (err) {
+    console.log(err);
+    await client.query('ROLLBACK');
+  } finally {
+    client.release();
+  }
 };
 
 exports.updateHabitsBatch = async (userId, habits) => {
