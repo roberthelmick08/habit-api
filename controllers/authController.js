@@ -25,14 +25,11 @@ exports.authenticateToken = (req, res, next) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  console.log('LOGIN');
   try {
     const user = await authModel.findUserByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
-
-    console.log('USER', user);
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
       expiresIn: '7d',
@@ -50,12 +47,18 @@ exports.login = async (req, res) => {
 exports.signup = async (req, res) => {
   const { email, password } = req.body;
 
-  console.log('SIGNUP');
-
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await authModel.signup(email, hashedPassword);
-    res.status(201).json(user);
+
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+      expiresIn: '7d',
+    });
+
+    res.json({
+      token,
+      user: { id: user.id, email: user.email },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err });

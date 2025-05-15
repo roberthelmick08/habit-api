@@ -9,49 +9,72 @@ exports.getHabitsByUser = async (userId) => {
 };
 
 exports.createHabit = async (userId, name, dateId, sortOrder) => {
-  console.log('BEFORE NEW HABIT');
+  const client = await db.connect();
 
-  const habitResult = await db.query(
-    'INSERT INTO habits (user_id, name, sort_order) VALUES ($1, $2, 3) RETURNING *',
-    [userId, name, sortOrder]
-  );
-  const newHabit = habitResult.rows[0];
+  try {
+    await client.query('BEGIN');
+    const habitResult = await client.query(
+      'INSERT INTO habits (user_id, name, sort_order) VALUES ($1, $2, $3) RETURNING *',
+      [userId, name, sortOrder]
+    );
 
-  await db.query(
-    'INSERT INTO habit_entries (date_habit_id, habit_id) VALUES ($1, $2)',
-    [dateId, newHabit.id]
-  );
+    const newHabit = habitResult.rows[0];
 
-  console.log('NEW HABIT', newHabit);
-  return newHabit;
+    await client.query(
+      'INSERT INTO habit_entries (date_habit_id, habit_id) VALUES ($1, $2)',
+      [dateId, newHabit.id]
+    );
+
+    await client.query('COMMIT');
+    return newHabit;
+  } catch (err) {
+    console.log(err);
+    await client.query('ROLLBACK');
+  } finally {
+    client.release();
+  }
 };
 
-exports.deleteHabit = async (userId, habitId) => {
-  const result = await db.query(
-    `UPDATE habits
+exports.deleteHabit = async (userId, habitId, dateHabitId) => {
+  const client = await db.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    const result = await client.query(
+      `UPDATE habits
       SET archived = TRUE
       WHERE user_id = $1 AND id = $2
       RETURNING *`,
-    [userId, habitId]
-  );
-  return result.rows[0];
-};
-
-exports.updateHabit = async (userId, habitId, name) => {
-  try {
-    console.log('!!!', userId, habitId, name);
-
-    const result = await db.query(
-      `UPDATE habits SET name = $3 WHERE user_id = $1 AND id = $2 RETURNING *`,
-      [userId, habitId, name]
+      [userId, habitId]
     );
-    console.log('@@@@', result.rows[0]);
+
+    await client.query(
+      `DELETE FROM habit_entries
+      WHERE habit_id = $1 AND date_habit_id = $2`,
+      [habitId, dateHabitId]
+    );
+
+    await client.query('COMMIT');
+
     return result.rows[0];
   } catch (err) {
     console.log(err);
     await client.query('ROLLBACK');
   } finally {
     client.release();
+  }
+};
+
+exports.updateHabit = async (userId, habitId, name) => {
+  try {
+    const result = await db.query(
+      `UPDATE habits SET name = $3 WHERE user_id = $1 AND id = $2 RETURNING *`,
+      [userId, habitId, name]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -68,6 +91,7 @@ exports.updateHabitsBatch = async (userId, habits) => {
     }
     await client.query('COMMIT');
   } catch (err) {
+    console.log(err);
     await client.query('ROLLBACK');
   } finally {
     client.release();

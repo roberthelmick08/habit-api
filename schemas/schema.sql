@@ -8,18 +8,27 @@ CREATE TABLE habits (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
   name TEXT NOT NULL,
-  sort_order INTEGER NOT NULL
+  sort_order INTEGER NOT NULL,
+  archived BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE date_habits (
-  id VARCHAR(10) PRIMARY KEY NOT NULL,
+  id SERIAL PRIMARY KEY,
+  date_id VARCHAR(10) NOT NULL,
   user_id INTEGER REFERENCES users(id),
   completed BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE habit_entries (
   id SERIAL PRIMARY KEY,
-  date_habit_id VARCHAR(10) REFERENCES date_habits(id),
+  date_habit_id VARCHAR(10),
   habit_id INTEGER REFERENCES habits(id),
   completed BOOLEAN
+);
+
+CREATE TABLE settings (
+  user_id INTEGER REFERENCES users(id),
+  enable_notifications BOOLEAN DEFAULT FALSE,
+  reminder_time VARCHAR(5) DEFAULT '21:00',
+  week_starts TEXT DEFAULT 'SUNDAY'
 );

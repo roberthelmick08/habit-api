@@ -48,3 +48,19 @@ exports.addHabitEntry = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.updateDateHabit = async (req, res) => {
+  const userId = req.params.userId;
+  const { dateHabitId, completed } = req.body;
+
+  try {
+    const entry = await dateHabitModel.updateDateHabit(
+      userId,
+      dateHabitId,
+      completed
+    );
+    res.status(201).json(entry);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

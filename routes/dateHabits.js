@@ -13,6 +13,11 @@ router.post(
   authController.authenticateToken,
   dateHabitController.createDateHabits
 );
+router.put(
+  '/:userId',
+  authController.authenticateToken,
+  dateHabitController.updateDateHabit
+);
 router.post(
   '/entry',
   authController.authenticateToken,

@@ -11,9 +11,9 @@ exports.getDateHabits = async (userId) => {
 exports.getDateHabitsWithEntries = async (userId) => {
   const result = await db.query(
     `SELECT
-      dh.id AS "dateId",
+      dh.date_id AS "dateId",
       dh.completed,
-      (
+      COALESCE((
         SELECT json_agg(
           json_build_object(
             'id', h.id,
@@ -26,8 +26,8 @@ exports.getDateHabitsWithEntries = async (userId) => {
         )
         FROM habit_entries he
         INNER JOIN habits h ON he.habit_id = h.id
-        WHERE he.date_habit_id = dh.id
-      ) AS "habitEntries"
+        WHERE he.date_habit_id = dh.date_id AND h.user_id = $1
+      ), '[]'::json) AS "habitEntries"
     FROM date_habits dh
     WHERE dh.user_id = $1
     ORDER BY dh.id ASC;
@@ -45,7 +45,7 @@ exports.createDateHabits = async (userId, dateHabits, habits) => {
     await client.query('BEGIN');
     for (const dh of dateHabits) {
       const res = await client.query(
-        'INSERT INTO date_habits (id, user_id) VALUES ($1, $2) RETURNING *',
+        'INSERT INTO date_habits (date_id, user_id) VALUES ($1, $2) RETURNING *',
         [dh.dateId, userId]
       );
 
@@ -74,8 +74,23 @@ exports.createDateHabits = async (userId, dateHabits, habits) => {
     await client.query('COMMIT');
     return resultArray;
   } catch (err) {
+    console.log(err);
     await client.query('ROLLBACK');
   } finally {
     client.release();
+  }
+};
+
+exports.updateDateHabit = async (userId, dateHabitId, completedState) => {
+  try {
+    console.log('COMPLETED = ', completedState);
+    const result = await db.query(
+      `UPDATE date_habits SET completed = $3 WHERE user_id = $1 AND date_id = $2 RETURNING *`,
+      [userId, dateHabitId, completedState]
+    );
+    console.log(result.rows[0]);
+    return result.rows[0];
+  } catch (err) {
+    console.log(err);
   }
 };
