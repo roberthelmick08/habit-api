@@ -83,12 +83,10 @@ exports.createDateHabits = async (userId, dateHabits, habits) => {
 
 exports.updateDateHabit = async (userId, dateHabitId, completedState) => {
   try {
-    console.log('COMPLETED = ', completedState);
     const result = await db.query(
       `UPDATE date_habits SET completed = $3 WHERE user_id = $1 AND date_id = $2 RETURNING *`,
       [userId, dateHabitId, completedState]
     );
-    console.log(result.rows[0]);
     return result.rows[0];
   } catch (err) {
     console.log(err);

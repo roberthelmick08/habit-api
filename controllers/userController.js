@@ -49,7 +49,7 @@ exports.updatePassword = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const user = await userModel.updateEmail(userId, hashedPassword);
+    const user = await userModel.updatePassword(userId, hashedPassword);
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -10,13 +10,10 @@ exports.getSettingsByUser = async (userId) => {
 
 exports.updateAppSettings = async (userId, weekStartsOn) => {
   try {
-    console.log('!!!', weekStartsOn);
-
     const result = await db.query(
       `UPDATE settings SET week_starts = $2 WHERE user_id = $1`,
       [userId, weekStartsOn]
     );
-    console.log('RESULTS', result);
     return result.rows[0];
   } catch (err) {
     console.log(err);

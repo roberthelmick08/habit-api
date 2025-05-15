@@ -9,7 +9,6 @@ router.get(
   authController.authenticateToken,
   userController.getUserById
 );
-router.post('/', authController.authenticateToken, userController.createUser);
 router.put(
   '/email/:userId',
   authController.authenticateToken,
