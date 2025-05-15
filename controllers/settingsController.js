@@ -2,7 +2,6 @@ const settingsModel = require('../models/settingsModel');
 
 exports.getSettings = async (req, res) => {
   const userId = req.params.userId;
-  console.log('GET SETTINGS', userId);
 
   try {
     const users = await settingsModel.getSettingsByUser(userId);
@@ -17,7 +16,7 @@ exports.updateAppSettings = async (req, res) => {
   const { weekStartsOn } = req.body;
 
   try {
-    const user = await settingsModel.updateSettings(userId, weekStartsOn);
+    const user = await settingsModel.updateAppSettings(userId, weekStartsOn);
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });

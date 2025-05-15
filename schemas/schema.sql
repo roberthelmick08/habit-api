@@ -30,5 +30,5 @@ CREATE TABLE settings (
   user_id INTEGER REFERENCES users(id),
   enable_notifications BOOLEAN DEFAULT FALSE,
   reminder_time VARCHAR(5) DEFAULT '21:00',
-  week_starts TEXT DEFAULT 'SUNDAY'
+  week_starts TEXT DEFAULT 'Sunday'
 );

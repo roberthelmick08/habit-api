@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const bcrypt = require('bcrypt');
 
 exports.getUsers = async (req, res) => {
   try {
@@ -11,7 +12,6 @@ exports.getUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
   const userId = req.params.userId;
-  console.log('GET USER BY ID', userId);
 
   try {
     const users = await userModel.getUserById(userId);

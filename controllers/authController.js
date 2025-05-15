@@ -8,7 +8,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 exports.authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  console.log('AUTH HEADER', authHeader);
   if (!token) {
     return res.status(401).json({ error: 'Access denied. No token provided.' });
   }

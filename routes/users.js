@@ -11,12 +11,12 @@ router.get(
 );
 router.post('/', authController.authenticateToken, userController.createUser);
 router.put(
-  '/email',
+  '/email/:userId',
   authController.authenticateToken,
   userController.updateEmail
 );
 router.put(
-  '/password',
+  '/password/:userId',
   authController.authenticateToken,
   userController.updatePassword
 );
